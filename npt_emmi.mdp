@@ -1,0 +1,74 @@
+title                   = OPLS Lysozyme NPT equilibration 
+define                  = -DPOSRES  ; position restrain the protein
+; Run parameters
+integrator              = steep        ; leap-frog integrator
+nsteps                  = 250000     ; 2 * 50000 = 100 ps
+dt                      = 0.002     ; 2 fs
+
+; Energy Minimization
+emtol                   = 10
+emstep                  = 0.01
+; # of iterations in relax_shells
+niter                   = 20
+; Frequency of steepest descents steps when doing CG
+nstcgsteep              = 1000
+nbfgscorr               = 10
+
+; Output control
+nstxout                 = 1000       ; save coordinates every 1.0 ps
+nstvout                 = 1000       ; save velocities every 1.0 ps
+nstfout                 = 0
+nstenergy               = 250       ; save energies every 1.0 ps
+nstlog                  = 250       ; update log file every 1.0 ps
+
+; Selection of energy groups
+energygrps              = Protein Non-protein
+
+; Bond parameters
+continuation            = no       ; Restarting after NVT 
+constraint_algorithm    = lincs     ; holonomic constraints 
+constraints             = h-bonds   ; bonds involving H are constrained
+Shake-SOR               = no
+shake-tol               = 1e-4
+lincs_iter              = 1         ; accuracy of LINCS
+lincs_order             = 4         ; also related to accuracy
+lincs-warnangle         = 30
+; Nonbonded settings 
+cutoff-scheme           = Verlet    ; Buffered neighbor searching
+ns_type                 = grid      ; search neighboring grid cells
+nstlist                 = 5         ; 20 fs, largely irrelevant with Verlet scheme
+rlist                   = 1.0       ; nblist cut-off
+rcoulomb                = 1.0       ; short-range electrostatic cutoff (in nm)
+rvdw                    = 1.0       ; short-range van der Waals cutoff (in nm)
+DispCorr                = No  ; account for cut-off vdW scheme
+; Electrostatics
+coulombtype             = PME       ; Particle Mesh Ewald for long-range electrostatics
+pme_order               = 4         ; cubic interpolation
+fourierspacing          = 0.12      ; grid spacing for FFT
+
+ewald_rtol              = 1e-05
+ewald_geometry          = 3d
+epsilon_surface         = 0
+optimize_fft            = no
+
+; Temperature coupling is on
+tcoupl                  = V-rescale             ; modified Berendsen thermostat
+tc-grps                 = Protein Non-Protein   ; two coupling groups - more accurate
+tau_t                   = 0.2     0.2           ; time constant, in ps
+ref_t                   = 298     298           ; reference temperature, one for each group, in K
+; Pressure coupling is on
+pcoupl                  = Parrinello-Rahman     ; Pressure coupling on in NPT
+pcoupltype              = iso	tropic             ; uniform scaling of box vectors
+tau_p                   = 1.0                   ; time constant, in ps
+ref_p                   = 1.0                   ; reference pressure, in bar
+compressibility         = 4.5e-5                ; isothermal compressibility of water, bar^-1
+refcoord_scaling        = no
+andersen_seed           = 815131
+; Periodic boundary conditions
+pbc                     = xyz       ; 3-D PBC
+periodic_molecules      = no
+
+; Velocity generation
+gen_vel                 = yes        ; Velocity generation is off
+gen_temp                = 298.0
+gen_seed                = 173529 
